@@ -1,0 +1,17 @@
+[Unit]
+Description=Serveur Gunicorn de FermeGest
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/srv/fermegest
+Environment="DJANGO_DEBUG=0"
+Environment="DJANGO_SECRET_KEY=remplacer-par-une-longue-cle-aleatoire"
+Environment="DJANGO_ALLOWED_HOSTS=ferme.exemple.ga"
+ExecStart=/srv/fermegest/venv/bin/gunicorn config.wsgi:application \
+          --workers 3 --bind unix:/run/fermegest.sock
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

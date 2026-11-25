@@ -1,0 +1,5 @@
+{% if d.statut == 'OUVERTE' %}<span class="badge text-bg-warning">Ouverte</span>
+{% elif d.statut == 'PRISE_EN_CHARGE' %}<span class="badge text-bg-info">Prise en charge</span>
+{% elif d.statut == 'REPONDUE' %}<span class="badge text-bg-success">Répondue</span>
+{% else %}<span class="badge text-bg-secondary">Clôturée</span>{% endif %}
+{% if d.urgence == 'URGENTE' %}<span class="badge text-bg-danger">Urgent</span>{% endif %}

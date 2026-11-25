@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block titre %}Supprimer{% endblock %}
+{% block contenu %}
+<div class="card border-danger" style="max-width:640px"><div class="card-body p-4">
+  <h1 class="h4 text-danger"><i class="bi bi-exclamation-triangle"></i> Confirmer la suppression</h1>
+  <p class="mb-1">Voulez-vous vraiment supprimer : <strong>{{ object }}</strong> ?</p>
+  <p class="text-muted small">Les éléments liés (cultures, récoltes, soins, mouvements…) seront supprimés avec lui. Cette action est irréversible.</p>
+  <form method="post" class="d-flex gap-2">{% csrf_token %}
+    <button class="btn btn-danger"><i class="bi bi-trash"></i> Oui, supprimer</button>
+    <a class="btn btn-outline-secondary" href="javascript:history.back()">Annuler</a>
+  </form>
+</div></div>
+{% endblock %}

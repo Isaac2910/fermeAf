@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block titre %}Mes demandes{% endblock %}
+{% block contenu %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="page-titre h3 mb-0"><i class="bi bi-chat-left-text"></i> Mes demandes de conseil</h1>
+  <a class="btn btn-primary" href="{% url 'conseils:demande_creer' %}"><i class="bi bi-plus-lg"></i> Nouvelle demande</a>
+</div>
+<div class="mb-3 d-flex flex-wrap gap-2">
+  <a class="btn btn-sm {% if not statut_actif %}btn-primary{% else %}btn-outline-primary{% endif %}" href="?">Toutes</a>
+  {% for code, lib in statuts %}<a class="btn btn-sm {% if statut_actif == code %}btn-primary{% else %}btn-outline-primary{% endif %}" href="?statut={{ code }}">{{ lib }}</a>{% endfor %}
+</div>
+<div class="card"><div class="table-responsive"><table class="table table-hover align-middle mb-0">
+  <thead class="table-light"><tr><th>#</th><th>Objet</th><th>Catégorie</th><th>Expert</th><th>Statut</th><th>Date</th></tr></thead>
+  {% for d in demandes %}<tr>
+    <td>{{ d.pk }}</td><td><a class="fw-semibold" href="{{ d.get_absolute_url }}">{{ d.titre }}</a></td>
+    <td>{{ d.get_categorie_display }}</td><td>{{ d.expert.get_full_name|default:"—" }}</td>
+    <td>{% include "conseils/_badge_statut.html" %}</td><td>{{ d.date_creation|date:"d/m/Y" }}</td></tr>
+  {% empty %}<tr><td colspan="6" class="text-center text-muted py-5">Aucune demande. Posez votre première question à un expert !</td></tr>{% endfor %}
+</table></div></div>
+{% endblock %}

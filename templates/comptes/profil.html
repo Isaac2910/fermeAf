@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block titre %}Mon profil{% endblock %}
+{% block contenu %}
+<h1 class="page-titre h3 mb-3"><i class="bi bi-person-circle"></i> Mon profil</h1>
+<div class="card" style="max-width:640px"><div class="card-body">
+  <p><strong>{{ user.get_full_name }}</strong> · {{ user.email }}<br><span class="badge text-bg-success">{{ user.profil.get_role_display }}</span></p>
+  <form method="post">{% csrf_token %}
+    {% for champ in form %}
+      {% if champ.name != 'specialite' or user.profil.est_expert %}
+      <div class="mb-3"><label class="form-label">{{ champ.label }}</label>{{ champ }}{{ champ.errors }}</div>
+      {% endif %}
+    {% endfor %}
+    <button class="btn btn-primary">Enregistrer</button>
+  </form>
+</div></div>
+{% endblock %}

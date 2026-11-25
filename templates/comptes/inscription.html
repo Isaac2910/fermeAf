@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% block titre %}Inscription{% endblock %}
+{% block contenu %}
+<div class="mx-auto" style="max-width:760px">
+  <div class="card"><div class="card-body p-4">
+    <h1 class="h3 page-titre"><i class="bi bi-person-plus"></i> Créer un compte</h1>
+    <form method="post" novalidate>{% csrf_token %}
+      {{ form.non_field_errors }}
+      <div class="row g-3">
+        {% for champ in form %}
+        <div class="col-md-6" {% if champ.name == 'role' %}id="champ-role"{% endif %}>
+          <label class="form-label" for="{{ champ.id_for_label }}">{{ champ.label }}</label>
+          {{ champ }}
+          {% if champ.help_text and champ.name == 'password1' %}<div class="form-text small">{{ champ.help_text|safe }}</div>{% endif %}
+          {% for e in champ.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+      <button class="btn btn-primary mt-4"><i class="bi bi-check2-circle"></i> Créer mon compte</button>
+      <a class="btn btn-link mt-4" href="{% url 'comptes:connexion' %}">J'ai déjà un compte</a>
+    </form>
+  </div></div>
+</div>
+{% endblock %}

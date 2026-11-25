@@ -1,0 +1,66 @@
+{% load static %}<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titre %}FermeGest{% endblock %} · FermeGest</title>
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-dark navbar-ferme navbar-expand sticky-top">
+  <div class="container-fluid">
+    {% if menu %}<button class="btn btn-sm btn-outline-light d-md-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuMobile" aria-label="Ouvrir le menu"><i class="bi bi-list"></i></button>{% endif %}
+    <a class="navbar-brand fw-bold" href="{% url 'comptes:accueil' %}"><i class="bi bi-tree-fill me-1"></i>FermeGest</a>
+    <ul class="navbar-nav ms-auto align-items-center">
+      {% if user.is_authenticated %}
+        {% if role_courant == 'ADMIN' %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}"><i class="bi bi-gear"></i> Administration</a></li>
+        {% elif role_courant == 'FERMIER' %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'exploitation:ferme_modifier' %}"><i class="bi bi-house-heart"></i><span class="d-none d-lg-inline"> {{ user.ferme.nom }}</span></a></li>
+        {% endif %}
+        <li class="nav-item"><a class="nav-link" href="{% url 'comptes:profil' %}"><i class="bi bi-person-circle"></i><span class="d-none d-md-inline"> {{ user.get_full_name|default:user.username }}</span>
+          {% if role_courant == 'EXPERT' %}<span class="badge text-bg-warning d-none d-sm-inline">Expert</span>{% elif role_courant == 'FERMIER' %}<span class="badge text-bg-light d-none d-sm-inline">Fermier</span>{% endif %}</a></li>
+        <li class="nav-item">
+          <form method="post" action="{% url 'comptes:deconnexion' %}" class="d-inline">{% csrf_token %}
+            <button class="btn btn-sm btn-outline-light ms-2"><i class="bi bi-box-arrow-right"></i><span class="d-none d-md-inline"> Quitter</span></button>
+          </form>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+<div class="container-fluid">
+  <div class="row">
+    {% if menu %}
+    <aside class="col-md-3 col-lg-2 sidebar p-3 d-none d-md-block">
+      <ul class="nav flex-column">
+        {% for item in menu %}
+        <li class="nav-item"><a class="nav-link {% if item.actif %}active{% endif %}" href="{{ item.url }}"><i class="bi {{ item.icone }}"></i>{{ item.libelle }}</a></li>
+        {% endfor %}
+      </ul>
+    </aside>
+    {% endif %}
+    <main class="col p-4">
+      {% for m in messages %}
+        <div class="alert alert-{% if m.tags == 'error' %}danger{% else %}{{ m.tags|default:'info' }}{% endif %} alert-dismissible fade show" role="alert">
+          {{ m }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+      {% block contenu %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% if menu %}
+<div class="offcanvas offcanvas-start" tabindex="-1" id="menuMobile">
+  <div class="offcanvas-header"><h5 class="offcanvas-title"><i class="bi bi-tree-fill text-success"></i> FermeGest</h5><button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button></div>
+  <div class="offcanvas-body sidebar"><ul class="nav flex-column">
+    {% for item in menu %}<li class="nav-item"><a class="nav-link {% if item.actif %}active{% endif %}" href="{{ item.url }}"><i class="bi {{ item.icone }}"></i>{{ item.libelle }}</a></li>{% endfor %}
+  </ul></div>
+</div>
+{% endif %}
+<script src="{% static 'vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

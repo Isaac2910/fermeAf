@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block titre %}{% if object %}Modifier{% else %}Nouveau{% endif %} · {{ titre_singulier }}{% endblock %}
+{% block contenu %}
+<h1 class="page-titre h3 mb-3"><i class="bi {{ icone }}"></i> {% if modification %}{{ titre_singulier }}{% elif object %}Modifier : {{ titre_singulier }}{% else %}Nouveau / nouvelle : {{ titre_singulier }}{% endif %}</h1>
+<div class="card" style="max-width:820px"><div class="card-body p-4">
+  <form method="post" novalidate>{% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="row g-3">
+      {% for champ in form %}
+      <div class="{% if champ.field.widget.input_type == 'textarea' or champ.name == 'description' or champ.name == 'notes' %}col-12{% else %}col-md-6{% endif %}">
+        {% if champ.field.widget.input_type == 'checkbox' %}
+          <div class="form-check mt-4">{{ champ }}<label class="form-check-label" for="{{ champ.id_for_label }}">{{ champ.label }}</label></div>
+        {% else %}
+          <label class="form-label" for="{{ champ.id_for_label }}">{{ champ.label }}{% if champ.field.required %} <span class="text-danger">*</span>{% endif %}</label>
+          {{ champ }}
+        {% endif %}
+        {% for e in champ.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+        {% if champ.help_text %}<div class="form-text">{{ champ.help_text }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="mt-4 d-flex gap-2">
+      <button class="btn btn-primary"><i class="bi bi-check-lg"></i> Enregistrer</button>
+      <a class="btn btn-outline-secondary" href="javascript:history.back()">Annuler</a>
+    </div>
+  </form>
+</div></div>
+{% endblock %}

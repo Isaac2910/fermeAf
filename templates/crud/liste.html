@@ -1,0 +1,64 @@
+{% extends "base.html" %}{% load crud_extras %}
+{% block titre %}{{ titre_pluriel }}{% endblock %}
+{% block contenu %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+  <h1 class="page-titre h3 mb-0"><i class="bi {{ icone }}"></i> {{ titre_pluriel }}</h1>
+  <div class="d-flex gap-2">
+    {% if prefixe == 'operation' %}
+      <a class="btn btn-outline-primary" href="{% url 'exploitation:bilan' %}"><i class="bi bi-graph-up"></i> Bilan</a>
+      <a class="btn btn-outline-primary" href="{% url 'exploitation:export_operations' %}"><i class="bi bi-filetype-csv"></i> Export CSV</a>
+    {% endif %}
+    {% if peut_creer %}
+    {% with nom_creer="exploitation:"|add:prefixe|add:"_creer" %}
+      <a class="btn btn-primary" href="{% url nom_creer %}"><i class="bi bi-plus-lg"></i> Nouveau</a>
+    {% endwith %}{% endif %}
+  </div>
+</div>
+{% if recherche %}
+<form class="row g-2 mb-3" method="get">
+  <div class="col-sm-6 col-md-4"><input class="form-control" type="search" name="q" value="{{ q }}" placeholder="Rechercher…"></div>
+  <div class="col-auto"><button class="btn btn-outline-secondary"><i class="bi bi-search"></i></button></div>
+</form>
+{% endif %}
+<div class="card"><div class="table-responsive">
+<table class="table table-hover align-middle mb-0">
+  <thead class="table-light"><tr>
+    {% for libelle, attr in colonnes %}<th>{{ libelle }}</th>{% endfor %}
+    <th class="text-end">Actions</th>
+  </tr></thead>
+  <tbody>
+  {% for obj in object_list %}
+    <tr {% if obj.en_alerte %}class="ligne-alerte"{% endif %}>
+      {% for libelle, attr in colonnes %}
+        <td>
+          {% if forloop.first and detail %}
+            {% with nom_detail="exploitation:"|add:prefixe|add:"_detail" %}<a class="fw-semibold" href="{% url nom_detail obj.pk %}">{% cellule obj attr %}</a>{% endwith %}
+          {% else %}{% cellule obj attr %}{% endif %}
+          {% if forloop.first and obj.en_alerte %}<span class="badge text-bg-danger ms-1">Stock bas</span>{% endif %}
+          {% if forloop.first and obj.en_retard %}<span class="badge text-bg-danger ms-1">En retard</span>{% endif %}
+        </td>
+      {% endfor %}
+      <td class="text-end text-nowrap">
+        {% if prefixe == 'tache' and obj.statut != 'TERMINEE' %}
+          <form method="post" action="{% url 'exploitation:tache_terminer' obj.pk %}" class="d-inline">{% csrf_token %}
+            <button class="btn btn-sm btn-outline-success" title="Marquer terminée"><i class="bi bi-check2"></i></button></form>
+        {% endif %}
+        {% if prefixe == 'produit' %}<a class="btn btn-sm btn-outline-secondary" title="Mouvement" href="{% url 'exploitation:mouvement_creer' %}?produit={{ obj.pk }}"><i class="bi bi-arrow-left-right"></i></a>{% endif %}
+        {% if peut_modifier %}{% with nom_mod="exploitation:"|add:prefixe|add:"_modifier" %}<a class="btn btn-sm btn-outline-primary" href="{% url nom_mod obj.pk %}"><i class="bi bi-pencil"></i></a>{% endwith %}{% endif %}
+        {% if peut_supprimer %}{% with nom_sup="exploitation:"|add:prefixe|add:"_supprimer" %}<a class="btn btn-sm btn-outline-danger" href="{% url nom_sup obj.pk %}"><i class="bi bi-trash"></i></a>{% endwith %}{% endif %}
+      </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="{{ colonnes|length|add:1 }}" class="text-center text-muted py-5">
+      <i class="bi {{ icone }} display-6"></i><br>Aucun élément enregistré pour le moment.</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div></div>
+{% if is_paginated %}
+<nav class="mt-3"><ul class="pagination">
+  {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ q }}">«</a></li>{% endif %}
+  <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} / {{ paginator.num_pages }}</span></li>
+  {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ q }}">»</a></li>{% endif %}
+</ul></nav>
+{% endif %}
+{% endblock %}

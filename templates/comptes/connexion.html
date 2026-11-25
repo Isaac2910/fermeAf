@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% block titre %}Connexion{% endblock %}
+{% block contenu %}
+<div class="position-fixed top-0 start-0 w-100 h-100 auth-fond d-flex align-items-center justify-content-center" style="z-index:1030">
+  <div class="card auth-carte w-100 mx-3">
+    <div class="card-body p-4">
+      <div class="text-center mb-3">
+        <i class="bi bi-tree-fill display-4 text-success"></i>
+        <h1 class="h3 page-titre">FermeGest</h1>
+        <p class="text-muted mb-0">Gestion de ferme &amp; conseil agricole</p>
+      </div>
+      {% for m in messages %}<div class="alert alert-{{ m.tags|default:'info' }}">{{ m }}</div>{% endfor %}
+      <form method="post" novalidate>{% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="mb-3"><label class="form-label">Nom d'utilisateur</label>{{ form.username }}</div>
+        <div class="mb-3"><label class="form-label">Mot de passe</label>{{ form.password }}</div>
+        <button class="btn btn-primary w-100"><i class="bi bi-box-arrow-in-right"></i> Se connecter</button>
+      </form>
+      <hr>
+      <p class="text-center mb-0">Pas encore de compte ? <a href="{% url 'comptes:inscription' %}">Créer un compte</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

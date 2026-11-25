@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block titre %}{{ object.titre }}{% endblock %}
+{% block contenu %}
+<a href="{% url 'conseils:fiches_liste' %}" class="small"><i class="bi bi-arrow-left"></i> Bibliothèque</a>
+<div class="card mt-2" style="max-width:860px"><div class="card-body p-4">
+  <span class="badge text-bg-success">{{ object.get_categorie_display }}</span>
+  <h1 class="page-titre h3 mt-2">{{ object.titre }}</h1>
+  <p class="text-muted small"><i class="bi bi-person-badge"></i> {{ object.auteur.get_full_name|default:object.auteur.username }}
+   ({{ object.auteur.profil.specialite }}) · {{ object.date_publication|date:"d/m/Y" }}</p>
+  <p class="lead fs-6">{{ object.resume }}</p><hr>
+  <div style="white-space:pre-line">{{ object.contenu }}</div>
+</div></div>
+{% endblock %}

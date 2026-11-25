@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block titre %}Fiche technique{% endblock %}
+{% block contenu %}
+<h1 class="page-titre h3 mb-3"><i class="bi bi-journal-plus"></i> {% if object %}Modifier la fiche{% else %}Nouvelle fiche technique{% endif %}</h1>
+<div class="card" style="max-width:860px"><div class="card-body p-4"><form method="post" novalidate>{% csrf_token %}
+  {% for champ in form %}
+    {% if champ.field.widget.input_type == 'checkbox' %}<div class="form-check mb-3">{{ champ }}<label class="form-check-label">{{ champ.label }}</label></div>
+    {% else %}<div class="mb-3"><label class="form-label">{{ champ.label }}</label>{{ champ }}{% for e in champ.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</div>{% endif %}
+  {% endfor %}
+  <button class="btn btn-primary"><i class="bi bi-check-lg"></i> Enregistrer</button> <a class="btn btn-outline-secondary" href="{% url 'conseils:mes_fiches' %}">Annuler</a>
+</form></div></div>
+{% endblock %}
